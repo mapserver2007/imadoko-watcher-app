@@ -19,3 +19,6 @@ local.properties
 .classpath
 .project
 .settings/
+
+# private file
+src/com/imadoko/watcher/util/AppKeys.java

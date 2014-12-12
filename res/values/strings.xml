@@ -2,7 +2,10 @@
 <resources>
 
     <string name="app_name">watcher</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_fullname">imadoko-watcher</string>
     <string name="action_settings">Settings</string>
+    
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">open</string>
 
 </resources>
