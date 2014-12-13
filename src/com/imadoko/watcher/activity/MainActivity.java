@@ -32,7 +32,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.Toast;
 
 import com.imadoko.watcher.R;
 import com.imadoko.watcher.entity.LocationEntity;
@@ -75,9 +74,7 @@ public class MainActivity extends MapActivity {
         int x = (int) (defaultLocation.getLng() * 1E6);
         int y = (int) (defaultLocation.getLat() * 1E6);
         c.setCenter(new GeoPoint(y, x));
-        c.setZoom(2);
-        PinOverlay pinOverlay = new PinOverlay(PinOverlay.PIN_VIOLET);
-        _mapView.getOverlays().add(pinOverlay);
+        c.setZoom(3);
         setContentView(_mapView);
 
         // とりあえず
@@ -123,7 +120,7 @@ public class MainActivity extends MapActivity {
                     _ws.send(JSON.encode(requestEntity));
                 }
             }
-        }, AppConstants.REALTIME_DRAW_INTERVAL, AppConstants.REALTIME_DRAW_INTERVAL);
+        }, 1000, AppConstants.REALTIME_DRAW_INTERVAL);
     }
 
     private void createWebSocketConnection() {
@@ -245,12 +242,13 @@ public class MainActivity extends MapActivity {
         GeoPoint geo = new GeoPoint(y, x);
         _mapView.getMapController().animateTo(geo);
         _mapView.invalidate();
-        writePositionLog(location);
-        showToast(String.valueOf(location.getLng()) + "," + String.valueOf(location.getLat()));
-    }
 
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        PinOverlay pinOverlay = new PinOverlay(getResources().getDrawable(R.drawable.ic_current));
+        pinOverlay.addPoint(geo, String.valueOf(location.getLng()) + "," + String.valueOf(location.getLat()));
+        _mapView.getOverlays().clear();
+        _mapView.getOverlays().add(pinOverlay);
+
+        writePositionLog(location);
     }
 
     private void showDialog(String message) {

@@ -11,14 +11,14 @@ public class AppConstants {
     public static final String REQUEST_WATCHER_TO_MAIN = "1";
 
     /** WebSocket/REST系 */
-//    public static final String WEBSOCKET_SERVER_URI  = "ws://imadoko-node-server.herokuapp.com";
-//    public static final String AUTHSALT_URL          = "https://imadoko-node-server.herokuapp.com/salt";
-//    public static final String AUTH_URL              = "https://imadoko-node-server.herokuapp.com/auth";
-//    public static final String LOCATION_URL          = "https://imadoko-node-server.herokuapp.com/location";
-    public static final String WEBSOCKET_SERVER_URI  = "ws://192.168.0.30:9224";
-    public static final String AUTHSALT_URL          = "http://192.168.0.30:9224/salt";
-    public static final String AUTH_URL              = "http://192.168.0.30:9224/auth";
-    public static final String LOCATION_URL          = "http://192.168.0.30:9224/location";
+    public static final String WEBSOCKET_SERVER_URI  = "ws://imadoko-node-server.herokuapp.com";
+    public static final String AUTHSALT_URL          = "https://imadoko-node-server.herokuapp.com/salt";
+    public static final String AUTH_URL              = "https://imadoko-node-server.herokuapp.com/auth";
+    public static final String LOCATION_URL          = "https://imadoko-node-server.herokuapp.com/location";
+//    public static final String WEBSOCKET_SERVER_URI  = "ws://192.168.0.30:9224";
+//    public static final String AUTHSALT_URL          = "http://192.168.0.30:9224/salt";
+//    public static final String AUTH_URL              = "http://192.168.0.30:9224/auth";
+//    public static final String LOCATION_URL          = "http://192.168.0.30:9224/location";
     public static final String WEBSOCKET_AUTHKEY_HEADER = "X-Imadoko-AuthKey";
     public static final String WEBSOCKET_APPLICATION_TYPE_HEADER = "X-Imadoko-ApplicationType";
     public static final int CLOSE_CODE = 1002;
