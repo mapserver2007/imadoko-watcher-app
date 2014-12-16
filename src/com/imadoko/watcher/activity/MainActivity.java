@@ -30,6 +30,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Menu;
 
@@ -50,6 +51,8 @@ public class MainActivity extends MapActivity {
     private LinkedList<Long> _heartbeatPool;
     private int _recconectCount;
 
+    private ActionBarDrawerToggle _drawerToggle;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,11 +61,6 @@ public class MainActivity extends MapActivity {
         Intent intent = getIntent();
         _authKey = intent.getStringExtra(AppConstants.PARAM_AUTH_KEY);
         _heartbeatPool = new LinkedList<Long>();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         if (_pref == null) {
             _pref = getSharedPreferences(AppConstants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -83,24 +81,61 @@ public class MainActivity extends MapActivity {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+//        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        _drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name, R.string.app_name);
+//        _drawerToggle.setDrawerIndicatorEnabled(true);
+//        drawerLayout.setDrawerListener(_drawerToggle);
+
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
+        stopTimer();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (_timer != null) {
-            _timer.cancel();
+        stopTimer();
+        if (_ws != null && _ws.getReadyState() == READYSTATE.OPEN) {
+            _ws.getConnection().close(AppConstants.CLOSE_CODE);
         }
-        if (_heartbeatTimer != null) {
-            _heartbeatTimer.cancel();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        stopTimer();
+        if (_ws != null && _ws.getReadyState() == READYSTATE.OPEN) {
+            _ws.getConnection().close(AppConstants.CLOSE_CODE);
         }
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        String connectionId = "a79ae076bc8cbaefdbf36e9562ac58f8bc352921";
+        connect(connectionId);
     }
 
     @Override
     protected boolean isRouteDisplayed() {
        return false;
+    }
+
+    private void stopTimer() {
+        if (_timer != null) {
+            _timer.cancel();
+            _timer.purge();
+        }
+        if (_heartbeatTimer != null) {
+            _heartbeatTimer.cancel();
+            _heartbeatTimer.purge();
+        }
     }
 
     private void connect(String connectionId) {
@@ -117,6 +152,7 @@ public class MainActivity extends MapActivity {
             @Override
             public void run() {
                 if (_ws != null && _ws.getReadyState() == READYSTATE.OPEN) {
+                    Log.d(AppConstants.TAG_APPLICATION, "send request");
                     _ws.send(JSON.encode(requestEntity));
                 }
             }
@@ -175,6 +211,7 @@ public class MainActivity extends MapActivity {
             public void onClose(int code, String reason, boolean remote) {
                 Log.d(AppConstants.TAG_WEBSOCKET, "onClose");
                 _heartbeatTimer.cancel();
+                _heartbeatTimer.purge();
 
                 if (code != AppConstants.CLOSE_CODE) {
                     _heartbeatPool = new LinkedList<Long>();
