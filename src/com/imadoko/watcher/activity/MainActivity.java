@@ -31,8 +31,10 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 
 import com.imadoko.watcher.R;
 import com.imadoko.watcher.entity.LocationEntity;
@@ -51,6 +53,7 @@ public class MainActivity extends MapActivity {
     private LinkedList<Long> _heartbeatPool;
     private int _recconectCount;
 
+    private DrawerLayout _drawerLayout;
     private ActionBarDrawerToggle _drawerToggle;
 
     @Override
@@ -74,6 +77,29 @@ public class MainActivity extends MapActivity {
         c.setCenter(new GeoPoint(y, x));
         c.setZoom(3);
         setContentView(_mapView);
+
+//        _drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        _drawerToggle = new ActionBarDrawerToggle(
+//                this,
+//                _drawerLayout,
+//                R.drawable.ic_drawer,
+//                R.string.drawer_open,
+//                R.string.drawer_close) {
+//
+//            @Override
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//            }
+//
+//            @Override
+//            public void onDrawerClosed(View drawerView) {
+//                super.onDrawerClosed(drawerView);
+//            }
+//
+//        };
+//
+//        _drawerLayout.setDrawerListener(_drawerToggle);
+
 
         // とりあえず
         String connectionId = "a79ae076bc8cbaefdbf36e9562ac58f8bc352921";
@@ -138,13 +164,12 @@ public class MainActivity extends MapActivity {
         }
     }
 
-    private void connect(String connectionId) {
+    private void connect(String destinationId) {
         final WebSocketRequestEntity requestEntity = new WebSocketRequestEntity();
-        requestEntity.setConnectionId(connectionId);
         requestEntity.setRequestId(AppConstants.REQUEST_WATCHER_TO_MAIN);
 
         if (_ws == null || _ws.getReadyState() != READYSTATE.OPEN) {
-            createWebSocketConnection();
+            createWebSocketConnection(destinationId);
         }
 
         _timer = new Timer();
@@ -159,7 +184,7 @@ public class MainActivity extends MapActivity {
         }, 1000, AppConstants.REALTIME_DRAW_INTERVAL);
     }
 
-    private void createWebSocketConnection() {
+    private void createWebSocketConnection(final String destinationId) {
         final Handler handler = new Handler();
         if (_recconectCount > AppConstants.FAST_RECCONECT_MAX_NUM) {
             _recconectCount = AppConstants.FAST_RECCONECT_MAX_NUM + 1;
@@ -178,6 +203,7 @@ public class MainActivity extends MapActivity {
         Map<String, String> headers = new HashMap<String, String>();
         headers.put(AppConstants.WEBSOCKET_AUTHKEY_HEADER, _authKey);
         headers.put(AppConstants.WEBSOCKET_APPLICATION_TYPE_HEADER, AppConstants.APPLICATION_TYPE);
+        headers.put(AppConstants.WEBSOCKET_DESTINATION_ID, destinationId);
 
         _ws = new WebSocketClient(uri, new Draft_17(), headers, 3000) {
             @Override
@@ -219,7 +245,7 @@ public class MainActivity extends MapActivity {
                         new Runnable() {
                             @Override
                             public void run() {
-                                createWebSocketConnection();
+                                createWebSocketConnection(destinationId);
                             }
                         },
                         _recconectCount > AppConstants.FAST_RECCONECT_MAX_NUM ? AppConstants.RECONNECT_INTERVAL
@@ -299,8 +325,16 @@ public class MainActivity extends MapActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+//        boolean drawerOpen = _drawerLayout.isDrawerOpen(mDrawerList);
+//        menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
     }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
 }

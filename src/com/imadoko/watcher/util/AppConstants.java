@@ -21,6 +21,7 @@ public class AppConstants {
 //    public static final String LOCATION_URL          = "http://192.168.0.30:9224/location";
     public static final String WEBSOCKET_AUTHKEY_HEADER = "X-Imadoko-AuthKey";
     public static final String WEBSOCKET_APPLICATION_TYPE_HEADER = "X-Imadoko-ApplicationType";
+    public static final String WEBSOCKET_DESTINATION_ID = "X-Imadoko-DestinationId";
     public static final int CLOSE_CODE = 1002;
     public static final int WS_TIMER_INTERVAL = 30000;
     public static final int PING_TIMER_INTERVAL = 20000;
